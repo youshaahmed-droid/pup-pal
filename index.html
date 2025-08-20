@@ -21,28 +21,45 @@
 </head>
 <body class="text-gray-800">
     
-    <!-- Hero Section -->
-    <section class="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-blue-50 relative overflow-hidden">
-        <div class="container mx-auto px-4 text-center fade-in">
-            <h1 class="text-5xl md:text-6xl font-bold mb-4 text-gray-900">Smart care for your best friend</h1>
-            <p class="text-xl md:text-2xl text-gray-600 mb-6">The advanced fitness tracker designed for dogs</p>
+<!-- Hero Section with Slideshow -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Slideshow Background -->
+    <div class="absolute inset-0 z-0">
+        <div class="slideshow-container relative w-full h-full">
+            <div class="slide active" style="background-image: url('https://images.pexels.com/photos/1564506/pexels-photo-1564506.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')"></div>
+        <div class="slide" style="background-image: url('https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')"></div>
+        <div class="slide" style="background-image: url('https://images.pexels.com/photos/2607544/pexels-photo-2607544.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')"></div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=1920&h=1080&fit=crop')"></div>
+        <div class="slide" style="background-image: url('https://images.pexels.com/photos/247937/pexels-photo-247937.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')"></div>
+        <div class="slide" style="background-image: url('https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')"></div>
+        </div>
+        <!-- Dark Overlay -->
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+    </div>
+    
+    <!-- Hero Content -->
+    <div class="container mx-auto px-4 text-center relative z-10">
+        <div class="fade-in">
+            <h1 class="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">Smart care for your best friend</h1>
+            <p class="text-xl md:text-2xl text-gray-100 mb-6 drop-shadow">The advanced fitness tracker designed for dogs</p>
             
             <!-- Price -->
-            <p class="text-2xl font-semibold mb-8">
-                <span class="text-primary">$89</span> + optional GPS for $6/month
+            <p class="text-2xl font-semibold mb-8 text-white">
+                <span class="text-3xl">$89</span> + optional GPS for $6/month
             </p>
             
             <!-- CTA Button -->
-            <button class="btn-primary text-white px-8 py-4 rounded-full text-lg font-bold">
+            <button class="btn-primary text-white px-8 py-4 rounded-full text-lg font-bold shadow-lg">
                 Get PupPal Today
             </button>
             
             <!-- Countdown Timer -->
-            <div class="mt-8 bg-secondary text-white py-3 px-6 rounded-full inline-block">
+            <div class="mt-8 bg-secondary text-white py-3 px-6 rounded-full inline-block shadow-lg">
                 <p class="font-semibold">Launch Special: Save $10 - Ends in <span id="countdown">47:59:59</span></p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
     
     <!-- What is PupPal Section -->
     <section class="py-20 bg-white fade-in">
