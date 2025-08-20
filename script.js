@@ -85,14 +85,23 @@
         });
         
         // Sticky Buy Button
-        window.addEventListener('scroll', function() {
+        /*window.addEventListener('scroll', function() {
             const stickyButton = document.querySelector('.sticky-buy');
             if (window.scrollY > 600) {
                 stickyButton.style.display = 'block';
             } else {
                 stickyButton.style.display = 'none';
             }
+        });*/
+        // Replace all button click handlers with:
+document.querySelectorAll('.btn-primary').forEach(button => {
+    if (button.textContent.includes('Buy') || button.textContent.includes('Order') || button.textContent.includes('Get PupPal')) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'checkout.html';
         });
+    }
+});
         
         // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
