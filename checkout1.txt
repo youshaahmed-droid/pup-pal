@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - PupPal</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Stripe JS -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Open+Sans:wght@400;600&family=Nunito:wght@600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-primary {
+            font-family: 'Nunito', sans-serif;
+            background-color: #FF6B6B;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background-color: #FF5252;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Stripe Elements styling */
+        .StripeElement {
+            box-sizing: border-box;
+            height: 42px;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            background-color: white;
+            transition: box-shadow 0.15s ease;
+        }
+        
+        .StripeElement--focus {
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+            border-color: #0EA5E9;
+        }
+        
+        .StripeElement--invalid {
+            border-color: #fa755a;
+        }
+        
+        #card-errors {
+            color: #fa755a;
+            font-size: 14px;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-bold text-gray-900">PupPal</a>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">Secure Checkout</span>
+                    <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- Payment Form -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-2xl font-bold mb-6">Complete Your Purchase</h2>
+                
+                <form id="payment-form">
+                    <!-- Contact Information -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Contact Information</h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Email</label>
+                                <input type="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Phone</label>
+                                <input type="tel" id="phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Shipping Information -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Shipping Address</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Full Name</label>
+                                <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Address</label>
+                                <input type="text" id="address" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+                            </div>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">City</label>
+                                    <input type="text" id="city" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">State</label>
+                                    <input type="text" id="state" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">ZIP</label>
+                                    <input type="text" id="zip" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Information -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Payment Information</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Card Information</label>
+                                <div id="card-element">
+                                    <!-- Stripe Elements will create input fields here -->
+                                </div>
+                                <div id="card-errors" role="alert"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Summary -->
+                    <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                        <h3 class="font-semibold mb-3">Order Summary</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>PupPal Device</span>
+                                <span>$89.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>GPS+ Subscription (First Month)</span>
+                                <span>$6.00</span>
+                            </div>
+                            <div class="flex justify-between text-green-600">
+                                <span>Launch Discount</span>
+                                <span>-$10.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Tax</span>
+                                <span>$7.44</span>
+                            </div>
+                            <div class="border-t pt-2 mt-2">
+                                <div class="flex justify-between font-bold text-lg">
+                                    <span>Total</span>
+                                    <span>$92.44</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" id="submit-button" class="w-full btn-primary text-white py-3 rounded-lg font-semibold">
+                        <span id="button-text">Pay $92.44</span>
+                        <span id="spinner" class="hidden">Processing...</span>
+                    </button>
+                    
+                    <!-- Error message -->
+                    <div id="payment-message" class="hidden mt-4 p-4 rounded-lg"></div>
+                </form>
+            </div>
+            
+            <!-- Trust Badges -->
+            <div class="text-center text-sm text-gray-600">
+                <p class="mb-2">🔒 Payments processed securely by Stripe</p>
+                <p>Your payment information is encrypted and never touches our servers</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-10 h-10 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Payment Successful!</h2>
+            <p class="text-gray-600 mb-4">Thank you for your order. You'll receive a confirmation email shortly.</p>
+            <p class="text-sm text-gray-500 mb-6">Order ID: <span id="order-id"></span></p>
+            <a href="index.html" class="btn-primary text-white px-6 py-2 rounded-lg inline-block">Back to Home</a>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Stripe
+        const stripe = Stripe('pk_test_YOUR_PUBLISHABLE_KEY_HERE'); // Replace with your key!
+        const elements = stripe.elements();
+        
+        // Create card element
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    color: '#32325d',
+                    fontFamily: '"Open Sans", sans-serif',
+                    fontSmoothing: 'antialiased',
+                    fontSize: '16px',
+                    '::placeholder': {
+                        color: '#aab7c4'
+                    }
+                },
+                invalid: {
+                    color: '#fa755a',
+                    iconColor: '#fa755a'
+                }
+            }
+        });
+        
+        // Mount card element
+        cardElement.mount('#card-element');
+        
+        // Handle card errors
+        cardElement.on('change', function(event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+        
+        // Handle form submission
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            // Disable button
+            const submitButton = document.getElementById('submit-button');
+            submitButton.disabled = true;
+            document.getElementById('button-text').classList.add('hidden');
+            document.getElementById('spinner').classList.remove('hidden');
+            
+            // For demo purposes - in production, you'd create payment intent on your server
+            try {
+                // Simulate payment processing
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Collect form data
+                const formData = {
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    name: document.getElementById('name').value,
+                    address: {
+                        line1: document.getElementById('address').value,
+                        city: document.getElementById('city').value,
+                        state: document.getElementById('state').value,
+                        postal_code: document.getElementById('zip').value,
+                    }
+                };
+                
+                // In production, you would:
+                // 1. Send formData to your server
+                // 2. Create a payment intent on your server
+                // 3. Confirm the payment with Stripe
+                
+                // For now, simulate success
+                showSuccess('pi_demo_' + Date.now());
+                
+            } catch (error) {
+                showError(error.message);
+            }
+            
+            // Re-enable button
+            submitButton.disabled = false;
+            document.getElementById('button-text').classList.remove('hidden');
+            document.getElementById('spinner').classList.add('hidden');
+        });
+        
+        function showSuccess(paymentIntentId) {
+            document.getElementById('order-id').textContent = paymentIntentId;
+            document.getElementById('success-modal').style.display = 'flex';
+        }
+        
+        function showError(message) {
+            const messageDiv = document.getElementById('payment-message');
+            messageDiv.className = 'mt-4 p-4 rounded-lg bg-red-50 text-red-800';
+            messageDiv.textContent = message;
+            messageDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

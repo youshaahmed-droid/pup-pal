@@ -84,15 +84,6 @@
             observer.observe(el);
         });
         
-        // Sticky Buy Button
-        /*window.addEventListener('scroll', function() {
-            const stickyButton = document.querySelector('.sticky-buy');
-            if (window.scrollY > 600) {
-                stickyButton.style.display = 'block';
-            } else {
-                stickyButton.style.display = 'none';
-            }
-        });*/
         // Replace all button click handlers with:
 document.querySelectorAll('.btn-primary').forEach(button => {
     if (button.textContent.includes('Buy') || button.textContent.includes('Order') || button.textContent.includes('Get PupPal')) {
@@ -102,6 +93,16 @@ document.querySelectorAll('.btn-primary').forEach(button => {
         });
     }
 });
+
+        // Sticky Buy Button
+        window.addEventListener('scroll', function() {
+            const stickyButton = document.querySelector('.sticky-buy');
+            if (window.scrollY > 600) {
+                stickyButton.style.display = 'block';
+            } else {
+                stickyButton.style.display = 'none';
+            }
+        });
         
         // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
